@@ -7,4 +7,4 @@
                  [ring/ring-core "1.8.0"]
                  [ring/ring-jetty-adapter "1.8.0"]
                  [nubank/k8s-api "0.1.0"]]
-  :repl-options {:init-ns clj-awesome-sandbox.core})
+  :repl-options {:init-ns clj-awesome-sandbox.test-core})
