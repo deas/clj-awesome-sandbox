@@ -4,6 +4,9 @@
 
 replicaCount: 1
 
+rbac:
+  create: true
+  
 image:
   repository: nginx
   pullPolicy: IfNotPresent
