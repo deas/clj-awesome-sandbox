@@ -6,6 +6,7 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [ring/ring-core "1.8.0"]
                  [ring/ring-jetty-adapter "1.8.0"]
+                 [org.martinklepsch/clj-http-lite "0.4.3"]
                  [io.fabric8/kubernetes-client "4.9.0"]
                  ;; [http-kit "2.4.0-alpha6"] ;; java 11
                  [nubank/k8s-api "0.1.0"]]

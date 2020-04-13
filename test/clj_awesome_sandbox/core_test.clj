@@ -5,6 +5,7 @@
    (io.fabric8.kubernetes.api.model ConfigBuilder))
   (:require [clojure.test :refer :all]
             [org.httpkit.client :as http]
+            [clj-http.lite.client :as http-light]
             [cheshire.core :refer :all]
             [kubernetes-api.core :as k8s-api]
             [clj-awesome-sandbox.core :refer :all]))
@@ -61,14 +62,19 @@
                             :action  :list
                             :request {:namespace "default"
                                       :watch true}})
+    (let [res (http-light/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods?watch=true"
+                             {:as :stream})
+          rdr (-> (:body res) (InputStreamReader. "UTF8") BufferedReader.)
+          items (parsed-seq rdr)]
+      (doseq [item items] (println item)))
+    
     @(http/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods"
                ;; watch=true
                {:as :stream}
                (fn [{:keys [status headers body error opts]}]
                  (let [rdr (-> body (InputStreamReader. "UTF8") BufferedReader.)
                        items (parsed-seq rdr)]
-                   (doseq [item items] (println item)))))
-    )
+                   (doseq [item items] (println item))))))
   token
   ;; chuck
   ;; kubectl-proxy
