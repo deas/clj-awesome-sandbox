@@ -51,7 +51,7 @@
                    :token     token
                    ;;  :basic-auth basic-auth
                    })]
-    (k8s-api/explore client :Pod)
+    ;; (k8s-api/explore client :Pod)
     #_(k8s-api/info client {:kind   :Pod
                             :action :list})
     #_(k8s-api/invoke client {:kind    :ConfigMap

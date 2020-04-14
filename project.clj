@@ -11,6 +11,7 @@
                  ;; [http-kit "2.4.0-alpha6"] ;; java 11
                  ;; [martian-httpkit "0.1.12-SNAPSHOT"]
                  [martian-clj-http-lite "0.1.12-SNAPSHOT"]
+                 ;; [martian-clj-http "0.1.12-SNAPSHOT"]
                  [nubank/k8s-api "0.1.1-SNAPSHOT"]]
   :profiles {:dev     {:plugins      [[lein-shell "0.5.0"]]
                        :repl-options {:init-ns clj-awesome-sandbox.core-test}
