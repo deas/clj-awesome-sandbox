@@ -9,9 +9,11 @@
                  [org.martinklepsch/clj-http-lite "0.4.3"]
                  [io.fabric8/kubernetes-client "4.9.0"]
                  ;; [http-kit "2.4.0-alpha6"] ;; java 11
-                 [nubank/k8s-api "0.1.0"]]
-  :repl-options {:init-ns clj-awesome-sandbox.core-test}
+                 ;; [martian-httpkit "0.1.12-SNAPSHOT"]
+                 [martian-clj-http-lite "0.1.12-SNAPSHOT"]
+                 [nubank/k8s-api "0.1.1-SNAPSHOT"]]
   :profiles {:dev     {:plugins      [[lein-shell "0.5.0"]]
+                       :repl-options {:init-ns clj-awesome-sandbox.core-test}
                        ;;:dependencies
                        #_[[org.clojure/tools.namespace "1.0.0"]
                         [org.clojure/tools.trace "0.7.10"]]}

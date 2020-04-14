@@ -1,14 +1,15 @@
 (ns clj-awesome-sandbox.core-test
-  (:import 
-   (java.io BufferedReader InputStreamReader)
-   (io.fabric8.kubernetes.client DefaultKubernetesClient)
-   (io.fabric8.kubernetes.api.model ConfigBuilder))
+  (:import
+    (java.io BufferedReader InputStreamReader)
+    (io.fabric8.kubernetes.client DefaultKubernetesClient)
+    (io.fabric8.kubernetes.api.model ConfigBuilder))
   (:require [clojure.test :refer :all]
-            [org.httpkit.client :as http]
+    ;; [org.httpkit.client :as http]
             [clj-http.lite.client :as http-light]
             [cheshire.core :refer :all]
             [kubernetes-api.core :as k8s-api]
-            [clj-awesome-sandbox.core :refer :all]))
+            [clj-awesome-sandbox.core :refer :all]
+            [kubernetes-api.misc :as misc]))
 
 (def chuck "https://192.168.178.52:6443")
 (def kubectl-proxy "http://localhost:8001")
@@ -33,24 +34,25 @@
 ;; /var/run/secrets/kubernetes.io/serviceaccount #
 
 #_(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+    (testing "FIXME, I fail."
+      (is (= 0 1))))
 
 (comment
+
   ;; curl -k -u admin:94a0f6c76ddd9f623b35a7a06865107d https://192.168.178.52:6443/api/v1/namespaces/default/pods
   ;; kubectl -n kube-system get secret default-token-w6vrc -o jsonpath=' {.data.token} '| base64 -d
   ;; {:token token}
-  (let [k8s-api (k8s/client
-                 #_proxy
-                 chuck
-                 #_{:token token}
-                 {:insecure? true
-                  :token token
-                 ;;  :basic-auth basic-auth
-                  })]
+  ;; (misc/http-request)
 
-        ;; (k8s-api/explore client :Pod)
-    #_(k8s-api/info client {:kind :Pod
+  (let [client (k8s-api/client
+                  kubectl-proxy
+                  #_{:token token}
+                  {                                         ;; :insecure? true
+                   :token     token
+                   ;;  :basic-auth basic-auth
+                   })]
+    (k8s-api/explore client :Pod)
+    #_(k8s-api/info client {:kind   :Pod
                             :action :list})
     #_(k8s-api/invoke client {:kind    :ConfigMap
                               :action  :create
@@ -58,24 +60,25 @@
                                         :body      {:apiVersion "v1"
                                                     :data       {"foo" "bar"}}}})
 
-    (k8s-api/invoke client {:kind    :Pod
+    #_(k8s-api/invoke client {:kind    :Pod
                             :action  :list
                             :request {:namespace "default"
-                                      :watch true}})
-    (let [res (http-light/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods?watch=true"
-                             {:as :stream})
+                                      :watch     true}})
+    #_(let [res (http-light/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods?watch=true"
+                              {:as :stream})
           rdr (-> (:body res) (InputStreamReader. "UTF8") BufferedReader.)
           items (parsed-seq rdr)]
       (doseq [item items] (println item)))
-    
-    @(http/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods"
-               ;; watch=true
-               {:as :stream}
-               (fn [{:keys [status headers body error opts]}]
-                 (let [rdr (-> body (InputStreamReader. "UTF8") BufferedReader.)
-                       items (parsed-seq rdr)]
-                   (doseq [item items] (println item))))))
-  token
+
+    ;; Does not work with get
+    #_@(http/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods"
+                 ;; watch=true
+                 {:as :stream}
+                 (fn [{:keys [status headers body error opts]}]
+                   (let [rdr (-> body (InputStreamReader. "UTF8") BufferedReader.)
+                         items (parsed-seq rdr)]
+                     (doseq [item items] (println item))))))
+  ;; token
   ;; chuck
   ;; kubectl-proxy
   )
