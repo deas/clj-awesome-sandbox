@@ -1,0 +1,16 @@
+{:paths ["assets" "src/clojure"],
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"},
+        borkdude/babashka {:mvn/version "0.1.3"}}
+ :aliases {;; :main
+           ;; {:main-opts ["-m" "babashka.main"]}
+           ;; :profile
+           #_{:extra-deps
+                           {com.clojure-goes-fast/clj-async-profiler {:mvn/version "0.4.1"}}
+              :extra-paths ["test"]
+              :jvm-opts ["-Djdk.attach.allowAttachSelf"]
+              :main-opts ["-m" "babashka.profile"]}
+           ;; :lib-tests
+           #_{:extra-deps {clj-http-lite
+                                       {:git/url "https://github.com/babashka/clj-http-lite"
+                                        :sha "f44ebe45446f0f44f2b73761d102af3da6d0a13e"}
+                           minimallist {:mvn/version "0.0.1"}}}}}

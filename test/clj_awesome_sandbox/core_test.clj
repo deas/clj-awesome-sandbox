@@ -4,15 +4,17 @@
     (io.fabric8.kubernetes.client DefaultKubernetesClient)
     (io.fabric8.kubernetes.api.model ConfigBuilder))
   (:require [clojure.test :refer :all]
+            [clojure.pprint :refer [pprint]]
     ;; [org.httpkit.client :as http]
             [clj-http.lite.client :as http-light]
             [cheshire.core :refer :all]
+            [kubernetes-api.internals.martian :as martian-int]
             [kubernetes-api.core :as k8s-api]
             [clj-awesome-sandbox.core :refer :all]
             [kubernetes-api.misc :as misc]))
 
 (def chuck "https://192.168.178.52:6443")
-(def kubectl-proxy "http://localhost:8001")
+  (def kubectl-proxy "http://localhost:8001")
 (def basic-auth {:username "admin"
                  :password "94a0f6c76ddd9f623b35a7a06865107d"})
 ;; Authorization: Bearer <token>
@@ -37,12 +39,25 @@
     (testing "FIXME, I fail."
       (is (= 0 1))))
 
+(defn debug-response-for [& args]
+  (pprint args))
+
 (comment
 
   ;; curl -k -u admin:94a0f6c76ddd9f623b35a7a06865107d https://192.168.178.52:6443/api/v1/namespaces/default/pods
   ;; kubectl -n kube-system get secret default-token-w6vrc -o jsonpath=' {.data.token} '| base64 -d
   ;; {:token token}
   ;; (misc/http-request)
+
+  (with-bindings [kubernetes-api.internals.martian/response-for debug-response-for]
+   (k8s-api/client
+      kubectl-proxy
+      #_{:token token}
+      {                                         ;; :insecure? true
+       :token     token
+       ;;  :basic-auth basic-auth
+       }))
+  (+ 1 1)
 
   (let [client (k8s-api/client
                   kubectl-proxy

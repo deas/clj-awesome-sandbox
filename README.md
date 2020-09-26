@@ -1,5 +1,12 @@
 # clj-awesome-sandbox
 
+# Babashka Cheats
+
+```shell script
+bb '(json/parse-stream *in* keyword)' <test/sample.json
+bb '(->> (json/parse-stream *in* keyword) (reduce-kv #(+ %1 %3) 0))' <test/sample.json
+```
+
 A Clojure library designed to ... well, that part is up to you.
 
 ## Usage
