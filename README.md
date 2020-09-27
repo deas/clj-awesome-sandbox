@@ -4,7 +4,10 @@
 
 ```shell script
 bb '(json/parse-stream *in* keyword)' <test/sample.json
-bb '(->> (json/parse-stream *in* keyword) (reduce-kv #(+ %1 %3) 0))' <test/sample.json
+
+bb '(->> (json/parse-stream *in* keyword) (reduce-kv #(+ %1 %3) 0)' <test/sample.json
+
+clj -Sdeps '{:deps {cheshire {:mvn/version "RELEASE"}}}' -e "(require '[cheshire.core :as json])(->> (json/parse-stream *in* keyword) (reduce-kv #(+ %1 %3) 0))" <test/sample.json
 ```
 
 A Clojure library designed to ... well, that part is up to you.
