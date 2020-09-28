@@ -1,4 +1,4 @@
-(ns clj-awesome-sandbox.core-test
+(ns clj-awesome-sandbox.k8s-test
   (:import
     (java.io BufferedReader InputStreamReader)
     (io.fabric8.kubernetes.client DefaultKubernetesClient)
@@ -10,7 +10,7 @@
             [cheshire.core :refer :all]
             [kubernetes-api.internals.martian :as martian-int]
             [kubernetes-api.core :as k8s-api]
-            [clj-awesome-sandbox.core :refer :all]
+            [clj-awesome-sandbox.k8s :refer :all]
             [kubernetes-api.misc :as misc]))
 
 (def chuck "https://192.168.178.52:6443")

@@ -16,6 +16,9 @@ A Clojure library designed to ... well, that part is up to you.
 
 FIXME
 
+## TODO
+- Should probably swallow clj-infra-sandbox
+
 ## License
 
 Copyright © 2020 FIXME
