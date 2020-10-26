@@ -1,10 +1,12 @@
 #!/usr/bin/env bb
 ;; OS_USERNAME=steffanand OS_PASSWORD=wont-tell OS_DOMAIN=OTC-EU-DE-00000000001000019548 OS_PROJECT_ID=c6a207a392ce480cb7c163be66472456 bb
 ;; bb --classpath . --main scratch
-(ns scratch
+#_(ns scratch
   (:require [babashka.curl :as curl]
             [cheshire.core :as json]))
 
+(require '[babashka.curl :as curl]
+         '[cheshire.core :as json])
 (def auth-endpoint "https://iam.eu-de.otc.t-systems.com:443/v3/auth/tokens")
 
 (def security-endpoint "https://iam.eu-de.otc.t-systems.com:443/v3.0/OS-CREDENTIAL/securitytokens")
