@@ -32,7 +32,16 @@ kubectl get pod -A -o yaml | bb \
         distinct)' | jet --pretty
 ```
 
-A Clojure library designed to ... well, that part is up to you.
+```clojure
+(->> (shell/sh "kubectl" "get" "pod" "-A" "-o" "yaml")
+     :out
+     yaml/parse-string
+     :items
+     (map #(get-in %1 [:spec :containers]))
+     flatten
+     (map :image)
+     distinct) 
+```
 
 ## Usage
 
