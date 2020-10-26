@@ -8,6 +8,15 @@ bb '(json/parse-stream *in* keyword)' <test/sample.json
 bb '(->> (json/parse-stream *in* keyword) (reduce-kv #(+ %1 %3) 0)' <test/sample.json
 
 clj -Sdeps '{:deps {cheshire {:mvn/version "RELEASE"}}}' -e "(require '[cheshire.core :as json])(->> (json/parse-stream *in* keyword) (reduce-kv #(+ %1 %3) 0))" <test/sample.json
+
+kubectl get pod -A -o json | bb \
+ '(->> (json/parse-stream *in* keyword) 
+        :items
+        (map #(get-in %1 [:spec :containers]))
+        flatten
+        (map :image)
+        distinct
+)' | jet --pretty
 ```
 
 A Clojure library designed to ... well, that part is up to you.
