@@ -43,6 +43,22 @@
   (pprint args))
 
 (comment
+  ;; https://docs.otc.t-systems.com/en-us/endpoint/index.html
+  (import [com.huaweicloud.sdk.core.auth BasicCredentials]
+          [com.huaweicloud.sdk.vpc.v2 VpcClient]
+          [com.huaweicloud.sdk.core.http HttpConfig]
+          [com.huaweicloud.sdk.vpc.v2.model ListVpcsRequest])
+  (let [vpc-client (-> (VpcClient/newBuilder)
+                       (.withHttpConfig (HttpConfig.))
+                       (.withCredential (doto (BasicCredentials.)
+                                          (.withAk nil)
+                                          (.withSk nil)
+                                          (.withProjectId nil)))
+                       ;; (.withEndpoint "https://vpc.eu-de.otc.t-systems.com")
+                       (.withEndpoint "http://localhost:9876")
+
+                       .build)]
+    (.listVpcs vpc-client (ListVpcsRequest.)))
 
   ;; curl -k -u admin:94a0f6c76ddd9f623b35a7a06865107d https://192.168.178.52:6443/api/v1/namespaces/default/pods
   ;; kubectl -n kube-system get secret default-token-w6vrc -o jsonpath=' {.data.token} '| base64 -d
