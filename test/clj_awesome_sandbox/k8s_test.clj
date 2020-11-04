@@ -2,7 +2,8 @@
   (:import
     (java.io BufferedReader InputStreamReader)
     (io.fabric8.kubernetes.client DefaultKubernetesClient)
-    (io.fabric8.kubernetes.api.model ConfigBuilder))
+    (io.fabric8.kubernetes.api.model ConfigBuilder)
+    (com.huawei.openstack4j.api.client IOSClientBuilder$AKSK))
   (:require [clojure.test :refer :all]
             [clojure.pprint :refer [pprint]]
     ;; [org.httpkit.client :as http]
@@ -14,7 +15,7 @@
             [kubernetes-api.misc :as misc]))
 
 (def chuck "https://192.168.178.52:6443")
-  (def kubectl-proxy "http://localhost:8001")
+(def kubectl-proxy "http://localhost:8001")
 (def basic-auth {:username "admin"
                  :password "94a0f6c76ddd9f623b35a7a06865107d"})
 ;; Authorization: Bearer <token>
@@ -44,21 +45,21 @@
 
 (comment
   ;; https://docs.otc.t-systems.com/en-us/endpoint/index.html
-  (import [com.huaweicloud.sdk.core.auth BasicCredentials]
-          [com.huaweicloud.sdk.vpc.v2 VpcClient]
-          [com.huaweicloud.sdk.core.http HttpConfig]
-          [com.huaweicloud.sdk.vpc.v2.model ListVpcsRequest])
-  (let [vpc-client (-> (VpcClient/newBuilder)
-                       (.withHttpConfig (HttpConfig.))
-                       (.withCredential (doto (BasicCredentials.)
-                                          (.withAk nil)
-                                          (.withSk nil)
-                                          (.withProjectId nil)))
-                       ;; (.withEndpoint "https://vpc.eu-de.otc.t-systems.com")
-                       (.withEndpoint "http://localhost:9876")
-
-                       .build)]
-    (.listVpcs vpc-client (ListVpcsRequest.)))
+  (import [com.huawei.openstack4j.api OSClient]
+          [com.huawei.openstack4j.openstack OSFactory]
+          [com.huawei.openstack4j.model.common Identifier]
+          [com.huawei.openstack4j.openstack.vpc.v1.domain Vpc])
+  (let [username (System/getenv "OS_USERNAME")
+        password (System/getenv "OS_PASSWORD")
+        auth-url (System/getenv "OS_AUTH_URL")
+        domain-name (System/getenv "OS_DOMAIN_NAME")
+        project (Identifier/byName "eu-de")
+        os-client (-> (OSFactory/builderV3)
+                      (.endpoint auth-url)
+                      (.credentials username password (Identifier/byName domain-name))
+                      (.scopeToProject project)
+                      .authenticate)]
+    (->> os-client .vpc .vpcs .list (map bean)))
 
   ;; curl -k -u admin:94a0f6c76ddd9f623b35a7a06865107d https://192.168.178.52:6443/api/v1/namespaces/default/pods
   ;; kubectl -n kube-system get secret default-token-w6vrc -o jsonpath=' {.data.token} '| base64 -d
@@ -66,22 +67,22 @@
   ;; (misc/http-request)
 
   (with-bindings [kubernetes-api.internals.martian/response-for debug-response-for]
-   (k8s-api/client
+    (k8s-api/client
       kubectl-proxy
       #_{:token token}
-      {                                         ;; :insecure? true
-       :token     token
+      {;; :insecure? true
+       :token token
        ;;  :basic-auth basic-auth
        }))
   (+ 1 1)
 
   (let [client (k8s-api/client
-                  kubectl-proxy
-                  #_{:token token}
-                  {                                         ;; :insecure? true
-                   :token     token
-                   ;;  :basic-auth basic-auth
-                   })]
+                 kubectl-proxy
+                 #_{:token token}
+                 {;; :insecure? true
+                  :token token
+                  ;;  :basic-auth basic-auth
+                  })]
     ;; (k8s-api/explore client :Pod)
     #_(k8s-api/info client {:kind   :Pod
                             :action :list})
@@ -92,14 +93,14 @@
                                                     :data       {"foo" "bar"}}}})
 
     #_(k8s-api/invoke client {:kind    :Pod
-                            :action  :list
-                            :request {:namespace "default"
-                                      :watch     true}})
+                              :action  :list
+                              :request {:namespace "default"
+                                        :watch     true}})
     #_(let [res (http-light/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods?watch=true"
-                              {:as :stream})
-          rdr (-> (:body res) (InputStreamReader. "UTF8") BufferedReader.)
-          items (parsed-seq rdr)]
-      (doseq [item items] (println item)))
+                                {:as :stream})
+            rdr (-> (:body res) (InputStreamReader. "UTF8") BufferedReader.)
+            items (parsed-seq rdr)]
+        (doseq [item items] (println item)))
 
     ;; Does not work with get
     #_@(http/get "http://127.0.0.1:8001/api/v1/namespaces/default/pods"
