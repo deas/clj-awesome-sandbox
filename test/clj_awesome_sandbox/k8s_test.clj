@@ -44,23 +44,6 @@
   (pprint args))
 
 (comment
-  ;; https://docs.otc.t-systems.com/en-us/endpoint/index.html
-  (import [com.huawei.openstack4j.api OSClient]
-          [com.huawei.openstack4j.openstack OSFactory]
-          [com.huawei.openstack4j.model.common Identifier]
-          [com.huawei.openstack4j.openstack.vpc.v1.domain Vpc])
-  (let [username (System/getenv "OS_USERNAME")
-        password (System/getenv "OS_PASSWORD")
-        auth-url (System/getenv "OS_AUTH_URL")
-        domain-name (System/getenv "OS_DOMAIN_NAME")
-        project (Identifier/byName "eu-de")
-        os-client (-> (OSFactory/builderV3)
-                      (.endpoint auth-url)
-                      (.credentials username password (Identifier/byName domain-name))
-                      (.scopeToProject project)
-                      .authenticate)]
-    (->> os-client .vpc .vpcs .list (map bean)))
-
   ;; curl -k -u admin:94a0f6c76ddd9f623b35a7a06865107d https://192.168.178.52:6443/api/v1/namespaces/default/pods
   ;; kubectl -n kube-system get secret default-token-w6vrc -o jsonpath=' {.data.token} '| base64 -d
   ;; {:token token}
@@ -74,7 +57,6 @@
        :token token
        ;;  :basic-auth basic-auth
        }))
-  (+ 1 1)
 
   (let [client (k8s-api/client
                  kubectl-proxy
