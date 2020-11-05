@@ -1,6 +1,7 @@
 {:paths ["assets" "src/clojure"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
         com.huawei/openstack4j {:mvn/version "1.0.25"}
+        gorillalabs/neo4j-clj {:mvn/version "4.1.0"}
         ;; com.huawei/openstack4j-core {:mvn/version "1.0.25"}
         ;; com.huaweicloud.sdk/huaweicloud-sdk-vpc {:mvn/version "3.0.19-beta"}
         borkdude/babashka {:mvn/version "0.1.3"}}
