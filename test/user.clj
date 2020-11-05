@@ -39,11 +39,12 @@
   ;; https://git01.int.hlg.de/pfm/misc/pfm-cloud-report-page/tree/master/content/reports/otc
   (require '[neo4j-clj.core :as db])
   (import (java.net URI))
-  (db/defquery get-all-servers
+  #_(db/defquery get-all-servers
                "MATCH (n:CloudServer{})-[]-(project:CloudProject)-[]-(dom:Domain),(n)-[]-(flav:Flavor),(n)-[]-(image:CloudImage) RETURN n.name,flav.name,image.name,project.name,dom.domainId")
   (let [local-db (db/connect (URI. "bolt://localhost:7687")
                              "admin"
-                             "admin")]
+                             "admin")
+        query (db/create-query "MATCH (n:CloudServer{})-[]-(project:CloudProject)-[]-(dom:Domain),(n)-[]-(flav:Flavor),(n)-[]-(image:CloudImage) RETURN n.name,flav.name,image.name,project.name,dom.domainId")]
     (db/with-transaction local-db tx
                          (println (get-all-servers tx))))
   )
