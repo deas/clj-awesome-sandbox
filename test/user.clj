@@ -34,7 +34,7 @@
   #_(with-open [session (db/get-session local-db)]
       (create-user session {:user {:first-name "Luke" :last-name "Skywalker"}}))
   ;; helm-2.16.5 get devops-pfm-cloud-exporter | less
-  ;; kubectl -n pfm-utilities port-forward service/cloud-overview-neo4j 7687:7687
+  ;; kubectl -n pfm-utilities port-forward service/cloud-overview-neo4j 7474:7474 7687:7687
   ;; Using a transaction
   ;; https://git01.int.hlg.de/pfm/misc/pfm-cloud-report-page/tree/master/content/reports/otc
   (require '[neo4j-clj.core :as db])
