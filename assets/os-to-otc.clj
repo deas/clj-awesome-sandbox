@@ -23,11 +23,14 @@
        dorun))
 
 (defn -main
-  "validate:
-   os-to-otc.clj 'terraform import openstack_identity_user_v3.%s %s' <state.json
+  "sneak:
+   os-to-otc.clj 'name: %s id: %s' <state.json
    
-   execute:
-   terraform state pull | os-to-otc.clj 'echo terraform import openstack_identity_user_v3.%s %s' | sh"
+   import:
+   terraform state pull | os-to-otc.clj 'echo terraform import opentelekomcloud_identity_user_v3.%s %s' | sh
+   
+   remove:
+   terraform state pull | os-to-otc.clj 'echo terraform state rm -dry-run openstack_identity_user_v3.%s' | sh"
   [[fmt] & _]
   (print-tf-users-fmt *in* fmt))
 
