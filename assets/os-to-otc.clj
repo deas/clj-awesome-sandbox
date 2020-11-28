@@ -8,11 +8,11 @@
   (->> (json/parse-stream rdr keyword)
        :resources
        (filter #(= (:type %1) "openstack_identity_user_v3"))
-       (map #(-> %1 :instances first :attributes))))
+       (map #(-> %1 :instances first :attributes (assoc :name-hack (:name %1))))))
 
 (defn tf-user-fmt
   [fmt users]
-  (map #(format fmt (:name %1) (:id %1)) users))
+  (map #(format fmt (:hack-name %1) (:id %1)) users))
 
 (defn print-tf-users-fmt
   [rdr fmt]
