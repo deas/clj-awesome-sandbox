@@ -1,5 +1,5 @@
 #!/usr/bin/env bb
-
+;; curl -s -H "X-Auth-Token: $OS_TOKEN" -H "Content-Type: application/json" https://iam.eu-de.otc.t-systems.com/v3/users | bb assets/otc-real-email-dupes-min.clj | jq .
 (def token (System/getenv "OS_TOKEN"))
 
 (defn real-email [user]
