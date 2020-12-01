@@ -1,5 +1,5 @@
 #!/usr/bin/env bb
-;;  curl -s -H "X-Auth-Token: $OS_TOKEN" -H "Content-Type: application/json" https://iam.eu-de.otc.t-systems.com/v3/users | otc-gen-otc-tf-resources.clj
+;; terraform state pull | /home/deas/work/projects/contentreich/clj-awesome-sandbox/assets/otc-gen-otc-tf-resources-min.clj >new/users.tf
 
 (def token (System/getenv "OS_TOKEN"))
 
@@ -16,10 +16,12 @@
   (format "resource \"opentelekomcloud_identity_user_v3\" \"%s\" {
   name  = \"%s\"
   email = \"%s\"
-}" (:name user) (:name user) (:email user)))
+}" (:name-hack user) (:name user) (:email user)))
 
 (defn fmt-users [body]
-  (->> (:users body)
+  (->> (:resources body)
+       (filter #(= (:type %1) "openstack_identity_user_v3"))
+       (map #(-> %1 :instances first :attributes (assoc :name-hack (:name %1))))
        (map real-email)
        (map tf-fmt)
        (str/join "\n\n")))
