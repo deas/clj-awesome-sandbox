@@ -32,16 +32,19 @@
   ;; kubectl -n pfm-utilities port-forward service/cloud-overview-neo4j 7474:7474 7687:7687
   ;; Using a transaction
   ;; https://git01.int.hlg.de/pfm/misc/pfm-cloud-report-page/tree/master/content/reports/otc
-  (require '[neo4j-clj.core :as db])
-  (import (java.net URI))
   #_(db/defquery get-all-servers
                  "MATCH (n:CloudServer{})-[]-(project:CloudProject)-[]-(dom:Domain),(n)-[]-(flav:Flavor),(n)-[]-(image:CloudImage) RETURN n.name,flav.name,image.name,project.name,dom.domainId")
-  (let [local-db (db/connect (URI. "bolt://localhost:7687")
+  (let [local-db (db/connect (URI. "bolt://10.168.26.210:7687")
                              (System/getenv "NEO4J_USER")
                              (System/getenv "NEO4J_PASSWORD"))
         query (db/create-query "MATCH (n:CloudServer{})-[]-(project:CloudProject)-[]-(dom:Domain),(n)-[]-(flav:Flavor),(n)-[]-(image:CloudImage) RETURN n.name,flav.name,image.name,project.name,dom.domainId")]
     (db/with-transaction local-db tx
-                         (println (get-all-servers tx))))
+                         (println (query tx))
+                         ;; (println (get-all-servers tx))
+                         ))
+
+  (+ 1 1)
+
   )
 
 (comment
@@ -62,4 +65,42 @@
                       (.scopeToProject project)
                       .authenticate)]
     (->> os-client .vpc .vpcs .list (map bean)))
+  )
+
+;; https://github.com/babashka/babashka
+;; bb --nrepl-server
+;; jack in
+;; 🚀
+(comment
+  (ns-aliases 'user)
+
+  (def roles
+    (-> (shell/sh "gcloud" "iam" "roles" "list" "--format" "json")
+        :out
+        (json/parse-string keyword)))
+
+  (let [sa-exlusions ["roles/accesscontextmanager.policyAdmin"
+                      "roles/compute.networkAdmin"
+                      "roles/compute.xpnAdmin"
+                      "roles/iam.securityAdmin"
+                      "roles/iam.serviceAccountAdmin"
+                      "roles/logging.configWriter"
+                      "roles/resourcemanager.projectCreator"
+                      "roles/resourcemanager.folderAdmin"]
+        role-names (->> roles
+                        (filter #(and
+                                  (str/includes? (:name %) "dmin")
+                                  (not (str/includes? (:name %) "org"))
+                                  (not (contains? sa-exlusions (:name %)))))
+                        (map :name)
+                        sort)]
+    ;; role-names
+    (->
+     (shell/sh "jq" "." :in (json/generate-string role-names {:pretty true}))
+     :out
+     println)
+
+    ;; (println (json/generate-string role-names {:pretty true})))
+    )
+    ;; (sort ["x" "a" "z"])
   )

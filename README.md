@@ -30,7 +30,32 @@ kubectl get pod -A -o yaml | bb \
         flatten
         (map :image)
         distinct)' | jet --pretty
+
+gcloud organizations get-iam-policy hermesworld.com | bb \
+ '(->> (slurp *in*)
+        yaml/parse-string
+        :bindings
+        first
+        )' | jet --pretty
+
 ```
+
+```clojure
+(def stuff (->> (shell/sh "gcloud" "organizations" "get-iam-policy" "hermesworld.com")
+                :out
+                yaml/parse-string
+                :bindings))
+
+(->> (shell/sh "gcloud" "organizations" "get-iam-policy" "hermesworld.com")
+     :out
+     yaml/parse-string
+     :bindings
+     (map #(get-in %1 [:spec :containers]))
+     flatten
+     (map :image)
+     distinct) 
+```
+
 
 ```clojure
 (->> (shell/sh "kubectl" "get" "pod" "-A" "-o" "yaml")
