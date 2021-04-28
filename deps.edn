@@ -3,6 +3,7 @@
         com.huawei/openstack4j {:mvn/version "1.0.25"}
         gorillalabs/neo4j-clj {:mvn/version "4.1.0"}
         cider/orchard {:mvn/version "0.6.1"}
+        http-kit/http-kit {:mvn/version "2.5.1"}
         ;; com.huawei/openstack4j-core {:mvn/version "1.0.25"}
         ;; com.huaweicloud.sdk/huaweicloud-sdk-vpc {:mvn/version "3.0.19-beta"}
         borkdude/babashka {:mvn/version "0.1.3"}}
